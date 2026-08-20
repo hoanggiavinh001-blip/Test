@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoAI - Trí tuệ nhân tạo toàn năng</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 h-screen flex overflow-hidden transition-colors duration-200">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-slate-100 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col justify-between transition-all duration-300 z-20">
+        <div>
+            <!-- Sidebar Header -->
+            <div class="p-4 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-500/20">
+                        D
+                    </div>
+                    <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">DoAI</span>
+                </div>
+                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 md:hidden">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- New Chat Button -->
+            <div class="px-4 mb-4">
+                <button onclick="startNewChat()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-all active:scale-95">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Đoạn chat mới</span>
+                </button>
+            </div>
+
+            <!-- Chat History List -->
+            <div class="px-3 space-y-1 overflow-y-auto max-h-[calc(100vh-250px)]">
+                <div class="text-xs font-semibold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">Hôm nay</div>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700/60 text-sm transition-colors group">
+                    <i class="fa-regular fa-message text-slate-400 group-hover:text-blue-500"></i>
+                    <span class="truncate">Tạo game 3D Three.js</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700/60 text-sm transition-colors group">
+                    <i class="fa-regular fa-message text-slate-400 group-hover:text-blue-500"></i>
+                    <span class="truncate">Viết code Python AI</span>
+                </a>
+                <div class="text-xs font-semibold text-slate-400 dark:text-slate-500 px-3 pt-4 pb-2 uppercase tracking-wider">7 ngày qua</div>
+                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700/60 text-sm transition-colors group">
+                    <i class="fa-regular fa-message text-slate-400 group-hover:text-blue-500"></i>
+                    <span class="truncate">Tạo ảnh cyberpunk phong cách...</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
+            <button onclick="toggleDarkMode()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 text-sm transition-colors">
+                <i class="fa-solid fa-moon text-slate-500 dark:text-yellow-400"></i>
+                <span class="dark:hidden">Chế độ tối</span>
+                <span class="hidden dark:inline">Chế độ sáng</span>
+            </button>
+            <div class="flex items-center space-x-3 px-3 py-2">
+                <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">B</div>
+                <div class="flex flex-col overflow-hidden">
+                    <span class="text-sm font-semibold truncate">Bin</span>
+                    <span class="text-xs text-emerald-500 font-medium">Miễn phí & Toàn năng</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 flex flex-col h-full relative">
+        
+        <!-- Top Navbar -->
+        <header class="h-14 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-10">
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 md:hidden">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div class="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">DoAI v2.6</span>
+                    <span class="text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400 px-1.5 py-0.5 rounded font-medium">Free 100%</span>
+                </div>
+            </div>
+
+            <!-- Mode Selector Chips -->
+            <div class="hidden sm:flex items-center space-x-2">
+                <button onclick="setMode('chat')" id="mode-chat" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 transition-all">
+                    <i class="fa-solid fa-comments mr-1"></i> Trò chuyện
+                </button>
+                <button onclick="setMode('image')" id="mode-image" class="px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">
+                    <i class="fa-solid fa-image mr-1"></i> Tạo ảnh
+                </button>
+                <button onclick="setMode('code')" id="mode-code" class="px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">
+                    <i class="fa-solid fa-code mr-1"></i> Viết Code
+                </button>
+            </div>
+        </header>
+
+        <!-- Chat / Response Container -->
+        <div id="chat-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+            
+            <!-- Welcome Screen (Initial State) -->
+            <div id="welcome-screen" class="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-6">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold shadow-xl shadow-blue-500/20">
+                    D
+                </div>
+                <div>
+                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-2">Xin chào, tôi là DoAI</h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base">Trợ lý AI toàn năng miễn phí. Tôi có thể giải đáp kiến thức, sáng tạo hình ảnh, lập trình phần mềm và hơn thế nữa.</p>
+                </div>
+
+                <!-- Quick Suggestions -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-left">
+                    <div onclick="sendPrompt('Viết cho tôi một ứng dụng game mini bằng HTML/JS')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 cursor-pointer transition-all bg-white dark:bg-slate-800/50 group">
+                        <div class="font-medium text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-600 flex items-center justify-between">
+                            <span>Viết code game HTML5</span>
+                            <i class="fa-solid fa-code text-xs text-slate-400"></i>
+                        </div>
+                        <div class="text-xs text-slate-400 mt-1">Tạo mã nguồn trò chơi nhanh chóng</div>
+                    </div>
+                    <div onclick="sendPrompt('Tạo ảnh một siêu xe thể thao chạy trên đường phố tương lai về đêm')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 cursor-pointer transition-all bg-white dark:bg-slate-800/50 group">
+                        <div class="font-medium text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-600 flex items-center justify-between">
+                            <span>Sáng tạo hình ảnh nghệ thuật</span>
+                            <i class="fa-solid fa-image text-xs text-slate-400"></i>
+                        </div>
+                        <div class="text-xs text-slate-400 mt-1">Thiết kế hình ảnh bằng câu lệnh</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Flow Container (Hidden initially, populated dynamically) -->
+            <div id="messages-list" class="space-y-6 max-w-3xl mx-auto w-full hidden">
+                <!-- Dynamic messages will be appended here -->
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="p-4 bg-transparent max-w-3xl mx-auto w-full">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-lg p-2 sm:p-3 relative focus-within:border-blue-500 transition-colors">
+                <textarea id="user-input" rows="1" placeholder="Nhập câu lệnh cho DoAI (ví dụ: Viết code, giải toán, tạo ảnh...)" class="w-full bg-transparent border-none outline-none resize-none text-slate-800 dark:text-slate-100 text-sm sm:text-base px-2 py-1 max-h-32" onkeydown="handleKeyPress(event)"></textarea>
+                
+                <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-700/60">
+                    <div class="flex items-center space-x-1 sm:space-x-2 text-slate-400">
+                        <button class="p-2 hover:text-blue-500 rounded-lg transition-colors" title="Tải tệp lên">
+                            <i class="fa-solid fa-paperclip"></i>
+                        </button>
+                        <button class="p-2 hover:text-blue-500 rounded-lg transition-colors" title="Sử dụng micro">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                        <button class="p-2 hover:text-blue-500 rounded-lg transition-colors" title="Chèn mã nguồn">
+                            <i class="fa-solid fa-terminal"></i>
+                        </button>
+                    </div>
+                    <button onclick="handleSend()" id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-xl flex items-center justify-center transition-all shadow-md shadow-blue-500/20 active:scale-95">
+                        <i class="fa-solid fa-arrow-up text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="text-center mt-2">
+                <span class="text-[11px] text-slate-400">DoAI có thể mắc lỗi. Hãy kiểm tra các thông tin quan trọng.</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentMode = 'chat';
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            ['chat', 'image', 'code'].forEach(m => {
+                const btn = document.getElementById(`mode-${m}`);
+                if (m === mode) {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 transition-all";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all";
+                }
+            });
+        }
+
+        function startNewChat() {
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('messages-list').classList.add('hidden');
+            document.getElementById('messages-list').innerHTML = '';
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        }
+
+        function sendPrompt(text) {
+            document.getElementById('user-input').value = text;
+            handleSend();
+        }
+
+        function handleSend() {
+            const input = document.getElementById('user-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Hide welcome screen, show messages list
+            document.getElementById('welcome-screen').classList.add('hidden');
+            const msgList = document.getElementById('messages-list');
+            msgList.classList.remove('hidden');
+
+            // Append User Message
+            msgList.innerHTML += `
+                <div class="flex items-start space-x-3 justify-end">
+                    <div class="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 max-w-xl text-sm leading-relaxed shadow-sm">
+                        ${escapeHtml(text)}
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0">B</div>
+                </div>
+            `;
+
+            input.value = '';
+            msgList.scrollTop = msgList.scrollHeight;
+
+            // Simulate AI Loading Response
+            const loadingId = 'loading-' + Date.now();
+            msgList.innerHTML += `
+                <div id="${loadingId}" class="flex items-start space-x-3">
+                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">D</div>
+                    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl rounded-tl-sm px-4 py-3 text-sm shadow-sm flex items-center space-x-2">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                    </div>
+                </div>
+            `;
+            msgList.scrollTop = msgList.scrollHeight;
+
+            // Simulate Response after 1 second
+            setTimeout(() => {
+                document.getElementById(loadingId).remove();
+                
+                let aiResponse = `Chào bạn! Tôi đã phân tích yêu cầu của bạn về: "<strong>${escapeHtml(text)}</strong>". Đây là một tính năng hoàn toàn được tối ưu hóa trên DoAI.`;
+                
+                if (currentMode === 'code' || text.toLowerCase().includes('code')) {
+                    aiResponse = `Dưới đây là đoạn mã nguồn mẫu hoàn chỉnh đáp ứng yêu cầu của bạn:<br><pre class="bg-slate-900 text-emerald-400 p-3 rounded-xl mt-2 overflow-x-auto text-xs"><code>// DoAI Code Generator Engine\nfunction initApp() {\n    console.log("DoAI running successfully!");\n}\ninitApp();</code></pre>`;
+                } else if (currentMode === 'image' || text.toLowerCase().includes('tạo ảnh')) {
+                    aiResponse = `Đã tạo thành công hình ảnh theo ý tưởng của bạn:<br><div class="mt-2 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700"><img src="https://picsum.photos/600/350" class="w-full object-cover" alt="AI Generated"></div>`;
+                }
+
+                msgList.innerHTML += `
+                    <div class="flex items-start space-x-3">
+                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">D</div>
+                        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-2xl text-sm leading-relaxed shadow-sm">
+                            ${aiResponse}
+                        </div>
+                    </div>
+                `;
+                msgList.scrollTop = msgList.scrollHeight;
+            }, 1000);
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
