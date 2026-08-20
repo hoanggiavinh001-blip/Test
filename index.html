@@ -1,288 +1,173 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoAI - Trí tuệ nhân tạo toàn năng</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', sans-serif] },
+                    colors: { 'doai-blue': '#3b82f6' }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
         .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .typing-dot { animation: blink 1.4s infinite both; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink { 0% { opacity: 0.2; } 20% { opacity: 1; } 100% { opacity: 0.2; } }
+        /* Language dropdown logic */
+        .lang-menu:focus-within .lang-dropdown { display: block; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 h-screen flex overflow-hidden transition-colors duration-200">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 h-screen flex overflow-hidden transition-colors duration-300">
 
     <!-- Sidebar -->
-    <aside id="sidebar" class="w-64 bg-slate-100 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col justify-between transition-all duration-300 z-20">
+    <aside id="sidebar" class="fixed md:relative w-64 h-full bg-slate-100 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between transition-all duration-300 z-30 -translate-x-full md:translate-x-0">
         <div>
-            <!-- Sidebar Header -->
             <div class="p-4 flex items-center justify-between">
                 <div class="flex items-center space-x-2">
-                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-md shadow-blue-500/20">
-                        D
-                    </div>
-                    <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">DoAI</span>
+                    <div class="w-9 h-9 rounded-2xl bg-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/20">D</div>
+                    <span id="app-title" class="font-bold text-xl tracking-tight text-slate-950 dark:text-white">DoAI</span>
                 </div>
-                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 md:hidden">
+                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white md:hidden">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <!-- New Chat Button -->
-            <div class="px-4 mb-4">
-                <button onclick="startNewChat()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-sm transition-all active:scale-95">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>Đoạn chat mới</span>
+            <div class="px-4 mb-6">
+                <button onclick="startNewChat()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md shadow-blue-600/20 transition-all active:scale-[0.98]">
+                    <i class="fa-solid fa-plus text-sm"></i>
+                    <span data-lang="newChat">Đoạn chat mới</span>
                 </button>
             </div>
 
-            <!-- Chat History List -->
-            <div class="px-3 space-y-1 overflow-y-auto max-h-[calc(100vh-250px)]">
-                <div class="text-xs font-semibold text-slate-400 dark:text-slate-500 px-3 py-2 uppercase tracking-wider">Hôm nay</div>
-                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700/60 text-sm transition-colors group">
-                    <i class="fa-regular fa-message text-slate-400 group-hover:text-blue-500"></i>
-                    <span class="truncate">Tạo game 3D Three.js</span>
-                </a>
-                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700/60 text-sm transition-colors group">
-                    <i class="fa-regular fa-message text-slate-400 group-hover:text-blue-500"></i>
-                    <span class="truncate">Viết code Python AI</span>
-                </a>
-                <div class="text-xs font-semibold text-slate-400 dark:text-slate-500 px-3 pt-4 pb-2 uppercase tracking-wider">7 ngày qua</div>
-                <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700/60 text-sm transition-colors group">
-                    <i class="fa-regular fa-message text-slate-400 group-hover:text-blue-500"></i>
-                    <span class="truncate">Tạo ảnh cyberpunk phong cách...</span>
-                </a>
-            </div>
+            <nav class="px-3 space-y-1 overflow-y-auto max-h-[calc(100vh-280px)]">
+                <div data-lang="recent" class="text-xs font-semibold text-slate-500 dark:text-slate-400 px-3 py-2 uppercase tracking-wider">Gần đây</div>
+                <div id="history-list" class="space-y-1">
+                    <a href="#" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-sm transition-colors group truncate">
+                        <i class="fa-regular fa-message text-slate-400 group-hover:text-blue-500 dark:text-slate-500 text-sm"></i>
+                        <span class="truncate text-slate-700 dark:text-slate-200 group-hover:text-slate-950 dark:group-hover:text-white">Ý tưởng content marketing</span>
+                    </a>
+                </div>
+            </nav>
         </div>
 
-        <!-- Sidebar Footer -->
-        <div class="p-4 border-t border-slate-200 dark:border-slate-700 space-y-2">
-            <button onclick="toggleDarkMode()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 text-sm transition-colors">
-                <i class="fa-solid fa-moon text-slate-500 dark:text-yellow-400"></i>
-                <span class="dark:hidden">Chế độ tối</span>
-                <span class="hidden dark:inline">Chế độ sáng</span>
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3 bg-slate-100/50 dark:bg-slate-900/50">
+            <!-- Language Selector -->
+            <div class="relative lang-menu">
+                <button class="w-full flex items-center justify-between space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-sm transition-colors text-slate-700 dark:text-slate-200">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-globe text-slate-500 dark:text-slate-400"></i>
+                        <span id="current-lang-name">Tiếng Việt</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-xs text-slate-400"></i>
+                </button>
+                <div class="lang-dropdown absolute bottom-full left-0 w-full mb-2 bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 hidden z-50">
+                    <button onclick="changeLanguage('vi')" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between">Tiếng Việt <i id="check-vi" class="fa-solid fa-check text-blue-500 text-xs hidden"></i></button>
+                    <button onclick="changeLanguage('en')" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between">English <i id="check-en" class="fa-solid fa-check text-blue-500 text-xs hidden"></i></button>
+                    <button onclick="changeLanguage('ja')" class="w-full text-left px-4 py-2 text-sm hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-between">日本語 <i id="check-ja" class="fa-solid fa-check text-blue-500 text-xs hidden"></i></button>
+                </div>
+            </div>
+
+            <button onclick="toggleDarkMode()" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 text-sm transition-colors text-slate-700 dark:text-slate-200">
+                <i class="fa-solid fa-moon dark:fa-sun text-slate-500 dark:text-slate-400"></i>
+                <span data-lang="darkMode" class="dark:hidden">Chế độ tối</span>
+                <span data-lang="lightMode" class="hidden dark:inline">Chế độ sáng</span>
             </button>
-            <div class="flex items-center space-x-3 px-3 py-2">
-                <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">B</div>
-                <div class="flex flex-col overflow-hidden">
-                    <span class="text-sm font-semibold truncate">Bin</span>
-                    <span class="text-xs text-emerald-500 font-medium">Miễn phí & Toàn năng</span>
+            
+            <div class="flex items-center space-x-3 px-3 py-2 mt-2 border-t dark:border-slate-700 pt-3">
+                <img src="https://api.dicebear.com/8.x/notionists/svg?seed=bin" alt="Avatar" class="w-9 h-9 rounded-full bg-slate-200 ring-2 ring-white dark:ring-slate-700">
+                <div>
+                    <div class="text-sm font-semibold text-slate-950 dark:text-white">Bin</div>
+                    <div data-lang="status" class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Tài khoản cao cấp</div>
                 </div>
             </div>
         </div>
     </aside>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 flex flex-col h-full relative">
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full bg-white dark:bg-slate-950 transition-colors duration-300">
         
-        <!-- Top Navbar -->
-        <header class="h-14 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md z-10">
-            <div class="flex items-center space-x-3">
-                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 md:hidden">
+        <!-- Header -->
+        <header class="sticky top-0 z-20 h-16 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 bg-white/90 dark:bg-slate-950/90 backdrop-blur-sm transition-colors duration-300">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebar()" class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white md:hidden">
                     <i class="fa-solid fa-bars text-lg"></i>
                 </button>
-                <div class="flex items-center space-x-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                    <span class="text-sm font-semibold text-blue-600 dark:text-blue-400">DoAI v2.6</span>
-                    <span class="text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400 px-1.5 py-0.5 rounded font-medium">Free 100%</span>
-                </div>
+                <h2 class="text-lg font-bold text-slate-950 dark:text-white">
+                    Do<span class="text-blue-600">AI</span> <span data-lang="headerTitle" class="font-medium text-slate-600 dark:text-slate-400 text-base">Toàn năng</span>
+                </h2>
             </div>
-
-            <!-- Mode Selector Chips -->
-            <div class="hidden sm:flex items-center space-x-2">
-                <button onclick="setMode('chat')" id="mode-chat" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 transition-all">
-                    <i class="fa-solid fa-comments mr-1"></i> Trò chuyện
-                </button>
-                <button onclick="setMode('image')" id="mode-image" class="px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">
-                    <i class="fa-solid fa-image mr-1"></i> Tạo ảnh
-                </button>
-                <button onclick="setMode('code')" id="mode-code" class="px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">
-                    <i class="fa-solid fa-code mr-1"></i> Viết Code
-                </button>
+            <div class="flex items-center gap-2">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                <span data-lang="online" class="text-sm font-medium text-emerald-600 dark:text-emerald-400">Đang hoạt động</span>
             </div>
         </header>
 
-        <!-- Chat / Response Container -->
-        <div id="chat-container" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
+        <!-- Chat Body -->
+        <div id="chat-container" class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 scroll-smooth">
             
-            <!-- Welcome Screen (Initial State) -->
-            <div id="welcome-screen" class="h-full flex flex-col items-center justify-center text-center max-w-2xl mx-auto space-y-6">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white text-3xl font-bold shadow-xl shadow-blue-500/20">
-                    D
-                </div>
-                <div>
-                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-2">Xin chào, tôi là DoAI</h1>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base">Trợ lý AI toàn năng miễn phí. Tôi có thể giải đáp kiến thức, sáng tạo hình ảnh, lập trình phần mềm và hơn thế nữa.</p>
-                </div>
+            <!-- Welcome Screen -->
+            <div id="welcome-screen" class="flex flex-col items-center justify-center h-full text-center max-w-3xl mx-auto transition-opacity duration-500">
+                <div class="w-20 h-20 rounded-3xl bg-blue-600 flex items-center justify-center text-white text-5xl font-bold shadow-xl shadow-blue-500/20 mb-8">D</div>
+                <h1 data-lang="welcomeTitle" class="text-4xl md:text-5xl font-extrabold text-slate-950 dark:text-white tracking-tighter mb-4">
+                    Xin chào, tôi là <span class="text-blue-600">DoAI</span>
+                </h1>
+                <p data-lang="welcomeSubtitle" class="text-lg text-slate-600 dark:text-slate-400 max-w-xl mb-12">
+                    Trợ lý AI thông minh của bạn. Hãy đặt câu hỏi, yêu cầu viết mã, hoặc tạo hình ảnh sáng tạo.
+                </p>
 
-                <!-- Quick Suggestions -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-left">
-                    <div onclick="sendPrompt('Viết cho tôi một ứng dụng game mini bằng HTML/JS')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 cursor-pointer transition-all bg-white dark:bg-slate-800/50 group">
-                        <div class="font-medium text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-600 flex items-center justify-between">
-                            <span>Viết code game HTML5</span>
-                            <i class="fa-solid fa-code text-xs text-slate-400"></i>
+                <!-- Suggestions -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-left">
+                    <button onclick="quickPrompt(this)" data-prompt="Viết một bài thơ ngắn về mùa thu bằng tiếng Việt" class="p-5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-2xl transition-all group">
+                        <div class="font-semibold text-slate-950 dark:text-white mb-1 flex items-center justify-between">
+                            <span data-lang="sug1Title">Viết sáng tạo</span>
+                            <i class="fa-solid fa-feather-pointed text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </div>
-                        <div class="text-xs text-slate-400 mt-1">Tạo mã nguồn trò chơi nhanh chóng</div>
-                    </div>
-                    <div onclick="sendPrompt('Tạo ảnh một siêu xe thể thao chạy trên đường phố tương lai về đêm')" class="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-blue-500 dark:hover:border-blue-500 cursor-pointer transition-all bg-white dark:bg-slate-800/50 group">
-                        <div class="font-medium text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-600 flex items-center justify-between">
-                            <span>Sáng tạo hình ảnh nghệ thuật</span>
-                            <i class="fa-solid fa-image text-xs text-slate-400"></i>
+                        <div data-lang="sug1Desc" class="text-sm text-slate-600 dark:text-slate-400">Làm thơ, viết email, sáng tạo nội dung...</div>
+                    </button>
+                    <button onclick="quickPrompt(this)" data-prompt="Tạo ảnh một chú mèo robot dễ thương phong cách Pixar, 4k" class="p-5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-2xl transition-all group">
+                        <div class="font-semibold text-slate-950 dark:text-white mb-1 flex items-center justify-between">
+                            <span data-lang="sug2Title">Tạo hình ảnh</span>
+                            <i class="fa-solid fa-image text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                         </div>
-                        <div class="text-xs text-slate-400 mt-1">Thiết kế hình ảnh bằng câu lệnh</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Flow Container (Hidden initially, populated dynamically) -->
-            <div id="messages-list" class="space-y-6 max-w-3xl mx-auto w-full hidden">
-                <!-- Dynamic messages will be appended here -->
-            </div>
-        </div>
-
-        <!-- Input Section -->
-        <div class="p-4 bg-transparent max-w-3xl mx-auto w-full">
-            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-lg p-2 sm:p-3 relative focus-within:border-blue-500 transition-colors">
-                <textarea id="user-input" rows="1" placeholder="Nhập câu lệnh cho DoAI (ví dụ: Viết code, giải toán, tạo ảnh...)" class="w-full bg-transparent border-none outline-none resize-none text-slate-800 dark:text-slate-100 text-sm sm:text-base px-2 py-1 max-h-32" onkeydown="handleKeyPress(event)"></textarea>
-                
-                <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-100 dark:border-slate-700/60">
-                    <div class="flex items-center space-x-1 sm:space-x-2 text-slate-400">
-                        <button class="p-2 hover:text-blue-500 rounded-lg transition-colors" title="Tải tệp lên">
-                            <i class="fa-solid fa-paperclip"></i>
-                        </button>
-                        <button class="p-2 hover:text-blue-500 rounded-lg transition-colors" title="Sử dụng micro">
-                            <i class="fa-solid fa-microphone"></i>
-                        </button>
-                        <button class="p-2 hover:text-blue-500 rounded-lg transition-colors" title="Chèn mã nguồn">
-                            <i class="fa-solid fa-terminal"></i>
-                        </button>
-                    </div>
-                    <button onclick="handleSend()" id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-xl flex items-center justify-center transition-all shadow-md shadow-blue-500/20 active:scale-95">
-                        <i class="fa-solid fa-arrow-up text-sm"></i>
+                        <div data-lang="sug2Desc" class="text-sm text-slate-600 dark:text-slate-400">Biến ý tưởng thành hình ảnh nghệ thuật</div>
+                    </button>
+                    <button onclick="quickPrompt(this)" data-prompt="Tạo một nút bấm (button) đẹp mắt bằng HTML và CSS với hiệu ứng hover" class="p-5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-2xl transition-all group">
+                        <div class="font-semibold text-slate-950 dark:text-white mb-1 flex items-center justify-between">
+                            <span data-lang="sug3Title">Lập trình</span>
+                            <i class="fa-solid fa-code text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                        <div data-lang="sug3Desc" class="text-sm text-slate-600 dark:text-slate-400">Viết, sửa lỗi và giải thích code</div>
+                    </button>
+                    <button onclick="quickPrompt(this)" data-prompt="Giải phương trình bậc hai: 2x^2 - 4x - 6 = 0 chi tiết từng bước" class="p-5 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-2xl transition-all group">
+                        <div class="font-semibold text-slate-950 dark:text-white mb-1 flex items-center justify-between">
+                            <span data-lang="sug4Title">Toán học & Logic</span>
+                            <i class="fa-solid fa-calculator text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                        </div>
+                        <div data-lang="sug4Desc" class="text-sm text-slate-600 dark:text-slate-400">Giải các bài toán phức tạp</div>
                     </button>
                 </div>
             </div>
-            <div class="text-center mt-2">
-                <span class="text-[11px] text-slate-400">DoAI có thể mắc lỗi. Hãy kiểm tra các thông tin quan trọng.</span>
-            </div>
+
+            <!-- Chat History (Dynamic) -->
+            <div id="chat-results" class="space-y-10 max-w-3xl mx-auto hidden"></div>
         </div>
 
-    </main>
-
-    <!-- JavaScript Logic -->
-    <script>
-        let currentMode = 'chat';
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('-translate-x-full');
-        }
-
-        function toggleDarkMode() {
-            document.documentElement.classList.toggle('dark');
-        }
-
-        function setMode(mode) {
-            currentMode = mode;
-            ['chat', 'image', 'code'].forEach(m => {
-                const btn = document.getElementById(`mode-${m}`);
-                if (m === mode) {
-                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-50 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800 transition-all";
-                } else {
-                    btn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all";
-                }
-            });
-        }
-
-        function startNewChat() {
-            document.getElementById('welcome-screen').classList.remove('hidden');
-            document.getElementById('messages-list').classList.add('hidden');
-            document.getElementById('messages-list').innerHTML = '';
-        }
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-            }
-        }
-
-        function sendPrompt(text) {
-            document.getElementById('user-input').value = text;
-            handleSend();
-        }
-
-        function handleSend() {
-            const input = document.getElementById('user-input');
-            const text = input.value.trim();
-            if (!text) return;
-
-            // Hide welcome screen, show messages list
-            document.getElementById('welcome-screen').classList.add('hidden');
-            const msgList = document.getElementById('messages-list');
-            msgList.classList.remove('hidden');
-
-            // Append User Message
-            msgList.innerHTML += `
-                <div class="flex items-start space-x-3 justify-end">
-                    <div class="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-3 max-w-xl text-sm leading-relaxed shadow-sm">
-                        ${escapeHtml(text)}
-                    </div>
-                    <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0">B</div>
-                </div>
-            `;
-
-            input.value = '';
-            msgList.scrollTop = msgList.scrollHeight;
-
-            // Simulate AI Loading Response
-            const loadingId = 'loading-' + Date.now();
-            msgList.innerHTML += `
-                <div id="${loadingId}" class="flex items-start space-x-3">
-                    <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">D</div>
-                    <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl rounded-tl-sm px-4 py-3 text-sm shadow-sm flex items-center space-x-2">
-                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                        <div class="w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                    </div>
-                </div>
-            `;
-            msgList.scrollTop = msgList.scrollHeight;
-
-            // Simulate Response after 1 second
-            setTimeout(() => {
-                document.getElementById(loadingId).remove();
-                
-                let aiResponse = `Chào bạn! Tôi đã phân tích yêu cầu của bạn về: "<strong>${escapeHtml(text)}</strong>". Đây là một tính năng hoàn toàn được tối ưu hóa trên DoAI.`;
-                
-                if (currentMode === 'code' || text.toLowerCase().includes('code')) {
-                    aiResponse = `Dưới đây là đoạn mã nguồn mẫu hoàn chỉnh đáp ứng yêu cầu của bạn:<br><pre class="bg-slate-900 text-emerald-400 p-3 rounded-xl mt-2 overflow-x-auto text-xs"><code>// DoAI Code Generator Engine\nfunction initApp() {\n    console.log("DoAI running successfully!");\n}\ninitApp();</code></pre>`;
-                } else if (currentMode === 'image' || text.toLowerCase().includes('tạo ảnh')) {
-                    aiResponse = `Đã tạo thành công hình ảnh theo ý tưởng của bạn:<br><div class="mt-2 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700"><img src="https://picsum.photos/600/350" class="w-full object-cover" alt="AI Generated"></div>`;
-                }
-
-                msgList.innerHTML += `
-                    <div class="flex items-start space-x-3">
-                        <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">D</div>
-                        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-2xl rounded-tl-sm px-4 py-3 max-w-2xl text-sm leading-relaxed shadow-sm">
-                            ${aiResponse}
-                        </div>
-                    </div>
-                `;
-                msgList.scrollTop = msgList.scrollHeight;
-            }, 1000);
-        }
-
-        function escapeHtml(text) {
-            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-        }
-    </script>
-</body>
-</html>
+        <!-- Input Area -->
+        <footer class="p-4 md:p-6 bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-8
